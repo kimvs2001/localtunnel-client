@@ -10,7 +10,7 @@ const http = require('http');
 
 const globalVar = require('./global/global.js');
 const dbname = globalVar.DB_NAME_BASIC_INFO_DB;
-const port = globalVar.PORT;
+const port = globalVar.INTO_PORT;
 const ip = globalVar.DOCKER_IP;
 const EDIT_MSG = 'edited by kjh at 2023.04.18';
 
@@ -18,7 +18,7 @@ new Promise((resolve,reject)=>{
     console.log('local-tunnel-client. start.');
     // DB 연결
     try {
-        mongoose.connect(`mongodb://${ip}/${dbname}`, { useNewUrlParser: true, useUnifiedTopology: true })
+        mongoose.connect(`mongodb://${globalVar.DB_IP}/${dbname}`, { useNewUrlParser: true, useUnifiedTopology: true })
         var db = mongoose.connection;
 
        // 4. 연결 실패
@@ -81,7 +81,7 @@ new Promise((resolve,reject)=>{
         console.log('subdomain : ', data.subdomain);
         var tmpSubdomain2 = data.subdomain.toString();
         return await new Promise((resolve,reject)=>{
-          http.get(`http://${ip}:${port}/api/tunneling?domainName=${data.subdomain}`)
+          http.get(`http://${globalVar.DOCKER_IP}:${globalVar.INTO_PORT}/api/tunneling?domainName=${data.subdomain}`)
 
         }).then((data)=>{
             console.log('resolve');
