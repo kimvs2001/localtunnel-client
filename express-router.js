@@ -15,7 +15,7 @@ var subdomainSchema = require('./models/subdomainSchema');
 const { reject } = require('async');
 var model = mongoose.model('subdomain',subdomainSchema);
 
-var DOCKER_LOCAL_HOST = globalVar.DOCKER_IP;
+// var DOCKER_LOCAL_HOST = globalVar.DOCKER_IP;
 
 
 
@@ -87,9 +87,9 @@ router.get('/tunneling',async function(req,res){
     global.isBusy = true;
 
     var argvs = { 
-                  localhost:DOCKER_LOCAL_HOST,
+                  localhost:globalVar.DOCKER_IP,
                   port:80,
-                  host:`http://smartroot.co.kr:3333`,
+                  host:`${globalVar.SERVER_IP}:${globalVar.OUT_SERVER_PORT}`,
                   // host:`http://smartroot.co.kr:8080`,
                   subdomain:subdomain,
                   clientPort:clientPort
