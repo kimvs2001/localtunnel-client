@@ -44,6 +44,8 @@ lt.tunneling=async function(){
     allow_invalid_cert: argv.allowInvalidCert,
   }).catch(err => {
     console.log('[lt.js] localtunnel error');
+//    global.isConnected = false;
+    console.log(`[lt.js] global.isConnected:${global.isConnected}`);
     // return false;
     throw err;
   });

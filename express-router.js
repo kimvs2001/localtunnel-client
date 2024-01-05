@@ -14,8 +14,8 @@ db.connectDB(globalVar.DB_NAME_BASIC_INFO_DB);
 var subdomainSchema = require('./models/subdomainSchema');
 const { reject } = require('async');
 var model = mongoose.model('subdomain',subdomainSchema);
-
-var DOCKER_LOCAL_HOST = globalVar.DOCKER_IP;
+var lt = require('./lt');
+//var DOCKER_LOCAL_HOST = globalVar.DOCKER_IP;
 
 
 
@@ -64,7 +64,7 @@ const saveAtDB = (subdomain,clientPort,fullURL)=>{
 }
 
 router.get('/tunneling',async function(req,res){
-
+    console.log("/tunneling called");
     console.log("isBusy:" + global.isBusy);
     console.log("isConnected:" + global.isConnected);
     var paramDomainName =  req.query.domainName ? req.query.domainName:"";
@@ -87,18 +87,19 @@ router.get('/tunneling',async function(req,res){
     global.isBusy = true;
 
     var argvs = { 
-                  localhost:DOCKER_LOCAL_HOST,
+                  localhost:globalVar.DOCKER_IP,
                   port:80,
-                  host:`http://smartroot.co.kr:3333`,
+                  host:`${globalVar.SERVER_IP}:${globalVar.OUT_SERVER_PORT}`,
                   // host:`http://smartroot.co.kr:8080`,
                   subdomain:subdomain,
                   clientPort:clientPort
                 } 
-    var lt = require('./lt');
-    lt.init(argvs);
-   
     
-    console.log('hi, connecting to server...');
+    lt.init(argvs);
+    
+     
+    console.log('hi, connecting to server... server host:',argvs.host);
+
     
 
     const timeout = new Promise((resolve,reject)=>{
@@ -116,25 +117,30 @@ router.get('/tunneling',async function(req,res){
 
       }
       resolve(res);
-    
+      //global.isConnected= true;
+      //global.isBusy = false;
+      //console.log(`[로컬터널링성공]클라우드서버에 로컬터널링이 연결되었습니다.isConnected:${global.isConnected},isBusy:${global.isBusy}`);
+    }).then(resolve=>{
+    global.isConnected= true;
+    global.isBusy = false;
+    console.log(`[로컬터널링성공]클라우드서버에 로컬터널링이 연결되었습니다.isConnected:${global.isConnected},isBusy:${global.isBusy}`);
     })
     .catch(err=>{
        console.log('[express-router.js] err ===>',);
-      //  console.log(err);
+       //  console.log(err);
+       global.isBusy = false;
+       global.isConnected = false;
+       console.log(`[로컬터널링실패]클라우드서버에 로컬터널링 연결 실패.isConnected:${global.isConnected},isBusy:${global.isBusy}`);
        console.log('<=== err [express-router.js]');
        reject('response undefined');
+       
     });
 
   
   
   Promise.race([promise,timeout]).then(response=>{
-    console.log("success!! response is : "+response);
-    global.isConnected = true;
-    console.log("isConnected:" + global.isConnected);
-    global.isBusy = false;
-    
-
-    const host = argvs.host.split('/')[2];
+  
+    const host = globalVar.SERVER_IP_WITHOUT_WWW+':'+globalVar.OUT_SERVER_PORT
     var fullURL  = "http://"+argvs.subdomain+"."+host
     // save At  mongo DB
     saveAtDB(argvs.subdomain,argvs.clientPort,fullURL);
@@ -142,12 +148,8 @@ router.get('/tunneling',async function(req,res){
     return res.json({result:true});
     
   }).catch(err=>{
-    // console.log("ERROR",err); //timeout
-    global.isConnected = false;
-    global.isBusy = false;
-    
+    console.log("ERROR",err); //timeout  
     //saveAtDB(argvs.subdomain); //delete !!!! this is just for testing
-
     return res.json({result:'error'});
   });
   });
@@ -168,6 +170,7 @@ router.get('/tunneling',async function(req,res){
 
   router.get('/reset',function(req,res){
       global.isConnected = false;
+      console.log('/reset called');
       console.log('global.isConnected = false');
       return res.json({result:'isConnected = false'});
 
