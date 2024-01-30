@@ -64,10 +64,12 @@ const saveAtDB = (subdomain,clientPort,fullURL)=>{
 }
 
 router.get('/tunneling',async function(req,res){
+  //router.get('/serialNo',async function(req,res){
     console.log("/tunneling called");
     console.log("isBusy:" + global.isBusy);
     console.log("isConnected:" + global.isConnected);
-    var paramDomainName =  req.query.domainName ? req.query.domainName:"";
+    // var paramDomainName =  req.query.domainName ? req.query.domainName:"";
+    var paramDomainName =  req.query.serialNo ? req.query.serialNo:"";
     if (paramDomainName.length < 1  ){ // 주소가 이상하면,
       return res.json({result:'WRONG_SUBDOMAIN'});
     }
