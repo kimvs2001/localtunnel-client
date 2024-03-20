@@ -81,7 +81,7 @@ new Promise((resolve,reject)=>{
         console.log('subdomain : ', data.subdomain);
         var tmpSubdomain2 = data.subdomain.toString();
         return await new Promise((resolve,reject)=>{
-          http.get(`http://${globalVar.DOCKER_IP}:${globalVar.INTO_PORT}/api/tunneling?domainName=${data.subdomain}`)
+          http.get(`http://${globalVar.DOCKER_IP}:${globalVar.INTO_PORT}/api/tunneling?serialNo=${data.subdomain}`)
 
         }).then((data)=>{
             console.log('resolve');
