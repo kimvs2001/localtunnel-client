@@ -174,7 +174,8 @@ router.get('/tunneling',async function(req,res){
       global.isConnected = false;
       console.log('/reset called');
       console.log('global.isConnected = false');
-      return res.json({result:'isConnected = false'});
+      process.exit(1); // reset이 call 되면 프로그램 종료. 도커가 켜줄 것이라 생각.
+      // return res.json({result:'isConnected = false'});
 
   });
 module.exports = router;

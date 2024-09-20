@@ -12,7 +12,8 @@ const globalVar = require('./global/global.js');
 const dbname = globalVar.DB_NAME_BASIC_INFO_DB;
 const port = globalVar.INTO_PORT;
 const ip = globalVar.DOCKER_IP;
-const EDIT_MSG = 'edited by kjh at 2023.04.18';
+const EDIT_MSG = 'edited by kjh at 2023.04.18 \
+                \nedited by kjh at 2024.09.20 when /reset call, process exit ';
 
 new Promise((resolve,reject)=>{
     console.log('local-tunnel-client. start.');
